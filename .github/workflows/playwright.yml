@@ -11,6 +11,7 @@ on:
         type: choice
         required: true
         options:
+          - all
           - chromium
           - firefox
           - webkit
@@ -26,10 +27,21 @@ jobs:
         node-version: lts/*
     - name: Install dependencies
       run: npm ci
-    - name: Install Playwright Browsers
+
+    - name: Install All Playwright Browsers
+      if: ${{ github.event.inputs.browser == 'all' }}
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
+    - name: Install Selected Playwright Browser
+      if: ${{ github.event.inputs.browser != 'all' }}
+      run: npx playwright install ${{ github.event.inputs.browser || 'chromium' }} --with-deps
+
+    - name: Run Playwright tests on all browsers
+      if: ${{ github.event.inputs.browser == 'all' }}
+      run: npx playwright test
+    - name: Run Playwright tests on selected browser
+      if: ${{ github.event.inputs.browser != 'all' }}
       run: npx playwright test --project=${{ github.event.inputs.browser || 'chromium' }}
+
     - uses: actions/upload-artifact@v6
       if: ${{ !cancelled() }}
       with:
