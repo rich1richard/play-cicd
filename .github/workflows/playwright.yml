@@ -11,10 +11,10 @@ on:
         type: choice
         required: true
         options:
-          - all
-          - chromium
-          - firefox
-          - webkit
+        - all
+        - chromium
+        - firefox
+        - webkit
 
 jobs:
   test:
