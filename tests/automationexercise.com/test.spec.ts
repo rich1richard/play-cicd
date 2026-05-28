@@ -3,8 +3,7 @@ import { test, expect } from '@playwright/test';
 test("can open the website", async ({ page }) => {
     await page.goto('https://www.automationexercise.com');
 
-    const pageTitle = await page.title();
-    await expect(pageTitle).toContain('Automation Exercise');
+    await expect(page).toHaveTitle(/Automation Exercise/);
 
     const title = await page
         .locator('.features_items .title')
@@ -12,4 +11,4 @@ test("can open the website", async ({ page }) => {
         .textContent();
 
     await expect(title).toContain('Features Items');
-})
+});
