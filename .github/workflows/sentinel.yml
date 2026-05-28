@@ -8,6 +8,9 @@ on:
 jobs:
   automationexercise:
     runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://www.automationexercise.com
+
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
