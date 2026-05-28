@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BASE_URL: https://www.automationexercise.com
+      USER_EMAIL: ${{ secrets.USER_EMAIL }}
+      USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v6
