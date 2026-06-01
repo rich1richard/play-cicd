@@ -1,13 +1,17 @@
 name: Sentinel
 
 on:
-  push:
-    branches: [main, master]
+  push: {}
   workflow_dispatch: {}
 
 jobs:
-  automationexercise:
-    runs-on: ubuntu-latest
+  test-staging:
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
     env:
       BASE_URL: https://www.automationexercise.com
       USER_EMAIL: ${{ secrets.USER_EMAIL }}
@@ -18,7 +22,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
-          cache: "npm"
+          cache: npm
 
       - uses: actions/cache@v5
         id: cache-playwright
@@ -32,11 +36,11 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers
-        if: ${{ steps.cache-playwright.outputs.cache-hit != 'true' }}
+        if: steps.cache-playwright.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
       - name: Install Playwright browsers dependencies
-        if: ${{ steps.cache-playwright.outputs.cache-hit == 'true' }}
+        if: steps.cache-playwright.outputs.cache-hit == 'true'
         run: npx playwright install-deps
 
       - name: Run tests
@@ -48,3 +52,20 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  deploy-production:
+    needs: test-staging
+    runs-on: ubuntu-latest
+    if: success() && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy to production
+        run: echo "Deploying to production"
+
+      - name: Wait for deployment
+        run: sleep 10
+
+      - name: Notify deployment completed
+        run: echo "Deployment completed successfully"
+
+
