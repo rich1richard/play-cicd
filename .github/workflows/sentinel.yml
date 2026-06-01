@@ -24,11 +24,13 @@ jobs:
           node-version: lts/*
           cache: npm
 
-      - uses: actions/cache@v5
+      - uses: actions/cache@v4
         id: cache-playwright
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashfiles('**/package.json') }}
+          path: |
+            ~/.cache/ms-playwright
+            C:\Users\runneradmin\AppData\Local\ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             playwright-${{ runner.os }}-
 
