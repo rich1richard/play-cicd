@@ -36,6 +36,7 @@ test("can log into the website", async ({ page }) => {
     await expect(page.locator('a[href="/logout"]')).toBeVisible({ timeout: 5000 });
 });
 
+test.use({ storageState: './storageState.json' });
 test("can buy a product", async ({ page }) => {
     test.step("Add the blue top to cart", async () => {
     await page.goto('/products');
