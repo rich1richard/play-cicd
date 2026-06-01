@@ -18,12 +18,26 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
+          cache: "npm"
+
+      - uses: actions/cache@v5
+        id: cache-playwright
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashfiles('**/package.json') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
 
       - name: Install dependencies
         run: npm ci
 
       - name: Install Playwright browsers
+        if: ${{ steps.cache-playwright.outputs.cache-hit != 'true' }}
         run: npx playwright install --with-deps
+
+      - name: Install Playwright browsers dependencies
+        if: ${{ steps.cache-playwright.outputs.cache-hit == 'true' }}
+        run: npx playwright install-deps
 
       - name: Run tests
         run: npx playwright test
@@ -33,4 +47,4 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 30
+          retention-days: 7

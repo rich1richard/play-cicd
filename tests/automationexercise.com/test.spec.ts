@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+    await page.context().clearCookies();
+    await page.context().clearPermissions();
+});
+
 test("can open the website", async ({ page }) => {
     // 1. Open the homepage
     await page.goto('');
@@ -29,4 +34,4 @@ test("can log into the website", async ({ page }) => {
 
     // 4. Verify the login success
     await expect(page.locator('a[href="/logout"]')).toBeVisible({ timeout: 5000 });
-})
+});
