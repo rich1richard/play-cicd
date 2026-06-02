@@ -10,12 +10,16 @@ export default async function globalSetup() {
     // ---------------------------------------------------------------------
     await page.goto(`${process.env.BASE_URL}/login`);
 
-    await consentView.waitFor({ state: 'attached', timeout: 20000 });
+    try {
+        await consentView.waitFor({ state: 'attached', timeout: 20000 });
 
-    await page.locator('.fc-cta-consent').first().click();
+        await page.locator('.fc-cta-consent').first().click();
 
-    await consentView.waitFor({ state: 'detached', timeout: 10000 });
-    await page.waitForLoadState('networkidle');
+        await consentView.waitFor({ state: 'detached', timeout: 10000 });
+        await page.waitForLoadState('networkidle');
+    } catch (error) {
+        // Consent not found or failed to handle, continue
+    }
 
     await page.context().storageState({ path: '.states/fc-consent-done.json' });
 
