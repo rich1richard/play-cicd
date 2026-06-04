@@ -20,8 +20,11 @@ test.describe('API Tests', () => {
             const products: Array<Product> = JSON.parse(fs.readFileSync('.states/products.json', 'utf-8'));
             const selectedProducts = products.sort(() => Math.random() - 0.5).slice(0, PRODUCTS_ADDED_COUNT);
 
-            const projectName = testInfo.project.name.replace(/\s+/g, '-').toLowerCase();
-            fs.writeFileSync(`./playwright-report/added-products-${projectName}.json`, JSON.stringify(selectedProducts));
+            test.info().attachments.push({
+                name: 'added-products.json',
+                contentType: 'application/json',
+                body: Buffer.from(JSON.stringify(selectedProducts))
+            })
 
             return selectedProducts;
         });
@@ -41,7 +44,11 @@ test.describe('API Tests', () => {
             const products: Array<Product> = JSON.parse(fs.readFileSync('.states/products.json', 'utf-8'));
             const selectedProduct = products.sort(() => Math.random() - 0.5)[0];
 
-            fs.writeFileSync('./playwright-report/checkout-product.json', JSON.stringify(selectedProduct));
+            test.info().attachments.push({
+                name: 'checkout-product.json',
+                contentType: 'application/json',
+                body: Buffer.from(JSON.stringify(selectedProduct))
+            })
 
             return selectedProduct;
         });
@@ -91,7 +98,11 @@ test.describe('API Tests', () => {
             const products: Array<Product> = JSON.parse(fs.readFileSync('.states/products.json', 'utf-8'));
             const selectedProduct = products.sort(() => Math.random() - 0.5)[0];
 
-            fs.writeFileSync('./playwright-report/display-product.json', JSON.stringify(selectedProduct));
+            test.info().attachments.push({
+                name: 'display-product.json',
+                contentType: 'application/json',
+                body: Buffer.from(JSON.stringify(selectedProduct))
+            })
 
             return selectedProduct;
         });
