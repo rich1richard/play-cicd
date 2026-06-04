@@ -15,8 +15,13 @@ test.describe('API Tests', () => {
         expect(await response.text()).toMatch(/All Products/);
     });
 
-    test("can add product to cart", async ({ page }, testInfo) => {
+    test("can add product to cart", async ({ page }) => {
         const products = await test.step("Get products", () => {
+            // make sure the test runs on the same data if flaky
+            if(test.info().attachments[0]){
+                return test.info().attachments[0];
+            }
+
             const products: Array<Product> = JSON.parse(fs.readFileSync('.states/products.json', 'utf-8'));
             const selectedProducts = products.sort(() => Math.random() - 0.5).slice(0, PRODUCTS_ADDED_COUNT);
 
@@ -41,6 +46,11 @@ test.describe('API Tests', () => {
 
     test("can checkout", async ({ page }) => {
         const product = await test.step("Get a product", () => {
+            // make sure the test runs on the same data if flaky
+            if(test.info().attachments[0]){
+                return test.info().attachments[0];
+            }
+
             const products: Array<Product> = JSON.parse(fs.readFileSync('.states/products.json', 'utf-8'));
             const selectedProduct = products.sort(() => Math.random() - 0.5)[0];
 
@@ -93,8 +103,13 @@ test.describe('API Tests', () => {
         });
     });
 
-    test("can verify the order", async ({ page }) => {
+    test("can see the product", async ({ page }) => {
         const product = await test.step("Get a product", () => {
+            // make sure the test runs on the same data if flaky
+            if(test.info().attachments[0]){
+                return test.info().attachments[0];
+            }
+
             const products: Array<Product> = JSON.parse(fs.readFileSync('.states/products.json', 'utf-8'));
             const selectedProduct = products.sort(() => Math.random() - 0.5)[0];
 

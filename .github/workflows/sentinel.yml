@@ -55,7 +55,7 @@ jobs:
       - uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
-          name: ${{ runner.os }}-playwright-report
+          name: ${{ runner.os }}-staging-report
           path: playwright-report/
           retention-days: 7
 
@@ -96,7 +96,7 @@ jobs:
       - uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
-          name: ${{ runner.os }}-playwright-report
+          name: ${{ runner.os }}-api-report
           path: playwright-report/
           retention-days: 7
 
