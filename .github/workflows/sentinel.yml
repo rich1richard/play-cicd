@@ -33,7 +33,7 @@ jobs:
         with:
           path: |
             ~/.cache/ms-playwright
-            C:\Users\runneradmin\AppData\Local\ms-playwright
+            ~\AppData\Local\ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             playwright-${{ runner.os }}-
@@ -42,7 +42,11 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers
-        if: steps.cache-playwright.outputs.cache-hit != 'true'
+        if: steps.cache-playwright.outputs.cache-hit != 'true' && matrix.os == 'windows-latest'
+        run: npx playwright install chromium firefox --with-deps
+
+      - name: Install Playwright browsers
+        if: steps.cache-playwright.outputs.cache-hit != 'true' && matrix.os != 'windows-latest'
         run: npx playwright install --with-deps
 
       - name: Install Playwright browsers dependencies
