@@ -53,7 +53,7 @@ jobs:
         run: npx playwright test test.spec.ts
 
       - uses: actions/upload-artifact@v6
-        if: !cancelled()
+        if: ${{ !cancelled() }}
         with:
           name: ${{ runner.os }}-playwright-report
           path: playwright-report/
@@ -94,7 +94,7 @@ jobs:
         run: npx playwright test api.spec.ts --project=chromium
 
       - uses: actions/upload-artifact@v6
-        if: !cancelled()
+        if: ${{ !cancelled() }}
         with:
           name: ${{ runner.os }}-playwright-report
           path: playwright-report/
