@@ -4,10 +4,12 @@ import { defineConfig, devices } from '@playwright/test';
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-import dotenv from 'dotenv';
-import path from 'path';
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+// import dotenv from 'dotenv';
+// import path from 'path';
+// dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+// Vérifie si le système actuel est Windows
+const isWindows = process.platform === 'win32';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -49,21 +51,23 @@ export default defineConfig({
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
     /* Test against mobile viewports. */
     {
       name: 'Mobile Chrome',
       use: { ...devices['Pixel 5'] },
     },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-    },
+
+    // On ajoute Webkit et Mobile Safari UNIQUEMENT si on n'est pas sous Windows
+    ...(!isWindows ? [
+      {
+        name: 'webkit',
+        use: { ...devices['Desktop Safari'] },
+      },
+      {
+        name: 'Mobile Safari',
+        use: { ...devices['Models Safari'] }, // Ajustez selon votre config exacte (ex: 'iPhone 12')
+      },
+    ] : []),
 
     /* Test against branded browsers. */
     // {

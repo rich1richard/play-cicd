@@ -41,14 +41,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
+      # Si le cache expire ET qu'on est sur Windows : on n'installe que chromium et firefox
+      - name: Install Playwright browsers (Windows)
         if: steps.cache-playwright.outputs.cache-hit != 'true' && matrix.os == 'windows-latest'
         run: npx playwright install chromium firefox --with-deps
 
-      - name: Install Playwright browsers
+      # Si le cache expire ET qu'on est sur Linux/macOS : on installe tout (y compris webkit)
+      - name: Install Playwright browsers (Linux/macOS)
         if: steps.cache-playwright.outputs.cache-hit != 'true' && matrix.os != 'windows-latest'
         run: npx playwright install --with-deps
 
+      # Si le cache est trouvé : on restaure uniquement les dépendances système
       - name: Install Playwright browsers dependencies
         if: steps.cache-playwright.outputs.cache-hit == 'true'
         run: npx playwright install-deps
