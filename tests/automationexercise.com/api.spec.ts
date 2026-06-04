@@ -1,29 +1,27 @@
 import { test, expect } from '@playwright/test';
 import * as cheerio from 'cheerio';
 import fs from 'fs';
-import { Product } from './utils';
-
-const PRODUCTS_ADDED_COUNT = 3;
+import { getRandomProducts, Product } from './utils';
 
 test.describe('API Tests', () => {
     test.use({ storageState: '.states/logged-in.json' });
 
-    test('can get product data', async ({ page }) => {
-        const response = await page.request.get('/products');
+    test('can get product data', async ({ request }) => {
+        const response = await request.get('/products');
 
         expect(response.ok()).toBeTruthy();
         expect(await response.text()).toMatch(/All Products/);
     });
 
-    test("can add product to cart", async ({ page }) => {
+    test("can add product to cart", async ({ request }) => {
         const products = await test.step("Get products", () => {
             // make sure the test runs on the same data if flaky
             if(test.info().attachments[0]){
-                return test.info().attachments[0];
+                return JSON.parse(test.info().attachments[0]?.body?.toString() || '[]');
             }
 
             const products: Array<Product> = JSON.parse(fs.readFileSync('.states/products.json', 'utf-8'));
-            const selectedProducts = products.sort(() => Math.random() - 0.5).slice(0, PRODUCTS_ADDED_COUNT);
+            const selectedProducts = getRandomProducts(products, 3);
 
             test.info().attachments.push({
                 name: 'added-products.json',
@@ -36,7 +34,7 @@ test.describe('API Tests', () => {
 
         await test.step("Add products to cart", async () => {
             for (const product of products) {
-                const addProductResponse = await page.request.get(`/add_to_cart/${product.id}`);
+                const addProductResponse = await request.get(`/add_to_cart/${product.id}`);
 
                 expect(addProductResponse.ok()).toBeTruthy();
                 expect(await addProductResponse.text()).toContain('Added To Cart');
@@ -44,15 +42,15 @@ test.describe('API Tests', () => {
         });
     });
 
-    test("can checkout", async ({ page }) => {
+    test("can checkout", async ({ request }) => {
         const product = await test.step("Get a product", () => {
             // make sure the test runs on the same data if flaky
             if(test.info().attachments[0]){
-                return test.info().attachments[0];
+                return JSON.parse(test.info().attachments[0]?.body?.toString() || '{}');
             }
 
             const products: Array<Product> = JSON.parse(fs.readFileSync('.states/products.json', 'utf-8'));
-            const selectedProduct = products.sort(() => Math.random() - 0.5)[0];
+            const selectedProduct = getRandomProducts(products)[0];
 
             test.info().attachments.push({
                 name: 'checkout-product.json',
@@ -64,14 +62,14 @@ test.describe('API Tests', () => {
         });
 
         await test.step("Add the product to cart", async () => {
-            const addProductResponse = await page.request.get(`/add_to_cart/${product.id}`);
+            const addProductResponse = await request.get(`/add_to_cart/${product.id}`);
 
             expect(addProductResponse.ok()).toBeTruthy();
             expect(await addProductResponse.text()).toContain('Added To Cart');
         });
 
         const token = await test.step("Extract the secret token", async () => {
-            const paymentResponse = await page.request.get('/payment');
+            const paymentResponse = await request.get('/payment');
             expect(paymentResponse.ok()).toBeTruthy();
 
             const $ = cheerio.load(await paymentResponse.text());
@@ -83,7 +81,7 @@ test.describe('API Tests', () => {
         });
 
         await test.step("Checkout with the token", async () => {
-            const checkoutResponse = await page.request.post('/payment', {
+            const checkoutResponse = await request.post('/payment', {
                 form: {
                     csrfmiddlewaretoken: token,
                     name_on_card: 'John Doe',
@@ -107,11 +105,11 @@ test.describe('API Tests', () => {
         const product = await test.step("Get a product", () => {
             // make sure the test runs on the same data if flaky
             if(test.info().attachments[0]){
-                return test.info().attachments[0];
+                return JSON.parse(test.info().attachments[0]?.body?.toString() || '{}');
             }
 
             const products: Array<Product> = JSON.parse(fs.readFileSync('.states/products.json', 'utf-8'));
-            const selectedProduct = products.sort(() => Math.random() - 0.5)[0];
+            const selectedProduct = getRandomProducts(products)[0];
 
             test.info().attachments.push({
                 name: 'display-product.json',
