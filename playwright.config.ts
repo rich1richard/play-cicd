@@ -65,7 +65,7 @@ export default defineConfig({
       },
       {
         name: 'Mobile Safari',
-        use: { ...devices['Models Safari'] }, // Ajustez selon votre config exacte (ex: 'iPhone 12')
+        use: { ...devices['iPhone 13'] }, // Ajustez selon votre config exacte (ex: 'iPhone 12')
       },
     ] : []),
 
