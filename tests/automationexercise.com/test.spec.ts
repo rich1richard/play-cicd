@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  // Intercepter et bloquer les scripts de publicités et d'analytics
+  // Intercept and block ad and analytics scripts
   await page.route('**/*{doubleclick,googleadservices,googlesyndication,analytics,adtrafficquality,fundingchoicesmessages}**', route => {
     route.abort();
   });

@@ -8,7 +8,7 @@ import { defineConfig, devices } from '@playwright/test';
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-// Vérifie si le système actuel est Windows
+// Check if the current system is Windows
 const isWindows = process.platform === 'win32';
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -57,7 +57,7 @@ export default defineConfig({
       use: { ...devices['Pixel 5'] },
     },
 
-    // On ajoute Webkit et Mobile Safari UNIQUEMENT si on n'est pas sous Windows
+    // Only add Webkit and Mobile Safari if we're not on Windows
     ...(!isWindows ? [
       {
         name: 'webkit',
@@ -65,7 +65,7 @@ export default defineConfig({
       },
       {
         name: 'Mobile Safari',
-        use: { ...devices['iPhone 13'] }, // Ajustez selon votre config exacte (ex: 'iPhone 12')
+        use: { ...devices['iPhone 13'] },
       },
     ] : []),
 
